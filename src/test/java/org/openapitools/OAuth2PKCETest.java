@@ -56,7 +56,7 @@ public class OAuth2PKCETest {
         kindeClientSDK= new KindeClientSDK(
                 domain,redirectUri,clientId,clientSecret,GrantType.PKCE.getValue(),logoutRedirectUri,null,null,null, null
         );
-        Object result = kindeClientSDK.login(response);
+        Object result = kindeClientSDK.login(request, response);
         System.out.println("testLoginTypePKCE() :: "+result.toString());
         assertNotNull(result);
         assertTrue(result instanceof RedirectView);
@@ -67,7 +67,7 @@ public class OAuth2PKCETest {
         kindeClientSDK= new KindeClientSDK(
                 domain,redirectUri,clientId,clientSecret,GrantType.PKCE.getValue(),logoutRedirectUri,null, Collections.singletonMap("audience",domain+"/api"),null, null
         );
-        Object result = kindeClientSDK.login(response);
+        Object result = kindeClientSDK.login(request, response);
         System.out.println("testLoginTypeClientCredentialFlowWithAudience() :: "+result.toString());
         assertNotNull(result);
         assertTrue(result instanceof RedirectView);
@@ -81,7 +81,7 @@ public class OAuth2PKCETest {
         Map<String,Object> additonalParameters=new HashMap<>();
         additonalParameters.put("org_code","org_b3afab4f52a");
         additonalParameters.put("org_name","My Application");
-        Object result = kindeClientSDK.login(response,additonalParameters);
+        Object result = kindeClientSDK.login(request, response, additonalParameters);
         System.out.println("testLoginTypeClientCredentialFlowWithOrgCode() :: "+result.toString());
         assertNotNull(result);
         assertTrue(result instanceof RedirectView);
@@ -95,7 +95,7 @@ public class OAuth2PKCETest {
         Map<String,Object> additonalParameters=new HashMap<>();
         additonalParameters.put("org_code","org_b3afab4f52a");
         additonalParameters.put("org_name","My Application");
-        Object result = kindeClientSDK.register(response,additonalParameters);
+        Object result = kindeClientSDK.register(request, response, additonalParameters);
         System.out.println("testRegisterTypeClientCredentialFlowWithAdditional() :: "+result.toString());
         assertNotNull(result);
         assertTrue(result instanceof RedirectView);
@@ -106,7 +106,7 @@ public class OAuth2PKCETest {
         kindeClientSDK= new KindeClientSDK(
                 domain,redirectUri,clientId,clientSecret,GrantType.PKCE.getValue(),logoutRedirectUri,null, Collections.singletonMap("audience",domain+"/api"),null, null
         );
-        Object result = kindeClientSDK.createOrg(response);
+        Object result = kindeClientSDK.createOrg(request, response);
         System.out.println("testCreateOrgTypeClientCredentialFlow() :: "+result.toString());
         assertNotNull(result);
         assertTrue(result instanceof RedirectView);
@@ -120,7 +120,7 @@ public class OAuth2PKCETest {
         Map<String,Object> additonalParameters=new HashMap<>();
         additonalParameters.put("org_code","org_b3afab4f52a");
         additonalParameters.put("org_name","My Application");
-        Object result = kindeClientSDK.createOrg(response,additonalParameters);
+        Object result = kindeClientSDK.createOrg(request,response,additonalParameters);
         System.out.println("testCreateOrgTypeClientCredentialFlowWithAdditional() :: "+result.toString());
         assertNotNull(result);
         assertTrue(result instanceof RedirectView);

@@ -169,7 +169,7 @@ public class KindeClientSDKTest {
         additional.put("org_name", "My Application");
 
         try {
-            client.login(response, additional);
+            client.login(request, response, additional);
             fail("Expected exception not thrown");
         }catch (Exception e){
             System.out.println(e.getCause().getMessage());
@@ -189,7 +189,7 @@ public class KindeClientSDKTest {
         additional.put("org_code", "123");
         additional.put("org_name", 123);
         try {
-            client.login(response, additional);
+            client.login(request, response, additional);
             fail("Expected exception not thrown");
         }catch (Exception e){
             System.out.println(e.getCause().getMessage());
@@ -211,7 +211,7 @@ public class KindeClientSDKTest {
         additional.put("org_code", "123");
         additional.put("org_name_test", "123");
         try {
-            client.login(response, additional);
+            client.login(request, response, additional);
             fail("Expected exception not thrown");
         }catch (Exception e){
             System.out.println(e.getCause().getMessage());
@@ -232,7 +232,7 @@ public class KindeClientSDKTest {
         additional.put("org_code_test", "123");
         additional.put("org_name", "123");
         try {
-            client.login(response,additional);
+            client.login(request, response,additional);
             fail("Expected exception not thrown");
         } catch (RuntimeException ex) {
             System.out.println(ex.getCause().getMessage());

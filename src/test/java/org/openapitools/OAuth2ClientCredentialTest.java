@@ -52,7 +52,7 @@ class OAuth2ClientCredentialTest {
     @Test
     void testLoginTypeClientCredential() {
         kindeClientSDK = new KindeClientSDK(domain, redirectUri, clientId, clientSecret, GrantType.CLIENT_CREDENTIALS.getValue(), logoutRedirectUri);
-        Object resp = kindeClientSDK.login(response);
+        Object resp = kindeClientSDK.login(request, response);
         System.out.println(resp);
         assertResponse(resp);
     }
@@ -60,7 +60,7 @@ class OAuth2ClientCredentialTest {
     @Test
     void testLoginTypeClientCredentialFlowWithAudience() {
         kindeClientSDK = new KindeClientSDK(domain, redirectUri, clientId, clientSecret, GrantType.CLIENT_CREDENTIALS.getValue(), logoutRedirectUri, "", Collections.singletonMap("audience", domain + "/api"));
-        Object resp = kindeClientSDK.login(response);
+        Object resp = kindeClientSDK.login(request, response);
         System.out.println(resp);
         assertResponse(resp);
     }
@@ -71,7 +71,7 @@ class OAuth2ClientCredentialTest {
         Map<String, Object> additional = new HashMap<>();
         additional.put("org_code", "org_123");
         additional.put("org_name", "My Application");
-        Object resp = kindeClientSDK.login(response,additional);
+        Object resp = kindeClientSDK.login(request, response,additional);
         System.out.println(resp);
         assertResponse(resp);
     }

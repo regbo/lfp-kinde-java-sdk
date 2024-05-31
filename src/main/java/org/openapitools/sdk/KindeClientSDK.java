@@ -227,7 +227,7 @@ public class KindeClientSDK {
         this(domain,redirectUri,clientId,clientSecret,grantType,logoutRedirectUri,null,additionalParameters,null, null);
     }
 
-    public Object login(HttpServletResponse response,Map<String, Object> additionalParameters) {
+    public Object login(HttpServletRequest request, HttpServletResponse response, Map<String, Object> additionalParameters) {
 //        if (additionalParameters==null){
 //            additionalParameters=new HashMap<>();
 //        }
@@ -239,7 +239,7 @@ public class KindeClientSDK {
                     ClientCredentials clientCredentials = new ClientCredentials(this.storage);
                     return clientCredentials.authenticate(response,this, additionalParameters);
                 case "authorization_code":
-                    AuthorizationCode authorizationCode = new AuthorizationCode(this.storage);
+                    AuthorizationCode authorizationCode = createAuthorizationCode(request);
                     return authorizationCode.authenticate(response,this,"login", additionalParameters);
                 case "authorization_code_flow_pkce":
                     PKCE pkce = new PKCE(this.storage);
@@ -252,11 +252,11 @@ public class KindeClientSDK {
         }
     }
 
-    public Object login(HttpServletResponse response){
-        return login(response,new HashMap<>());
+    public Object login(HttpServletRequest request, HttpServletResponse response) {
+        return login(request, response, new HashMap<>());
     }
 
-    public Object register(HttpServletResponse resp,Map<String, Object> additionalParameters) {
+    public Object register(HttpServletRequest request, HttpServletResponse resp, Map<String, Object> additionalParameters) {
 //        if (additionalParameters==null){
 //            additionalParameters=new HashMap<>();
 //        }
@@ -269,7 +269,7 @@ public class KindeClientSDK {
                 ClientCredentials clientCredentials = new ClientCredentials(this.storage);
                 return clientCredentials.authenticate(resp,this, additionalParameters);
             case "authorization_code":
-                AuthorizationCode authorizationCode = new AuthorizationCode(this.storage);
+                AuthorizationCode authorizationCode = createAuthorizationCode(request);
                 return authorizationCode.authenticate(resp,this,"registration", additionalParameters);
             case "authorization_code_flow_pkce":
                 PKCE pkce = new PKCE(this.storage);
@@ -279,27 +279,27 @@ public class KindeClientSDK {
         }
     }
 
-    public Object register(HttpServletResponse response){
-        return register(response,new HashMap<>());
+    public Object register(HttpServletRequest request, HttpServletResponse response) {
+        return register(request, response, new HashMap<>());
     }
 
-    public Object createOrg(HttpServletResponse resp,Map<String, Object> additionalParameters) {
+    public Object createOrg(HttpServletRequest request, HttpServletResponse response, Map<String, Object> additionalParameters) {
         additionalParameters.put("is_create_org", "true");
         if (!additionalParameters.containsKey("org_name")){
             additionalParameters.put("org_name", "");
         }
-        return this.register(resp,additionalParameters);
+        return this.register(request, response, additionalParameters);
     }
 
-    public Object createOrg(HttpServletResponse resp, String orgName) {
+    public Object createOrg(HttpServletRequest req, HttpServletResponse resp, String orgName) {
         Map<String, Object> additionalParameters_=new HashMap<>();
         additionalParameters_.put("is_create_org", "true");
         additionalParameters_.put("org_name", orgName);
-        return this.register(resp,additionalParameters_);
+        return this.register(req, resp, additionalParameters_);
     }
 
-    public Object createOrg(HttpServletResponse response){
-        return createOrg(response,new HashMap<>());
+    public Object createOrg(HttpServletRequest request, HttpServletResponse response) {
+        return createOrg(request, response, new HashMap<>());
     }
 
     public RedirectView logout(HttpServletResponse response) {
@@ -313,9 +313,9 @@ public class KindeClientSDK {
         return new RedirectView(logoutUrl);
     }
 
-    public Object getToken(HttpServletResponse response,HttpServletRequest req) throws Exception {
+    public Object getToken(HttpServletRequest request, HttpServletResponse response,HttpServletRequest req) throws Exception {
         if (GrantType.CLIENT_CREDENTIALS.getValue().equals(this.grantType)) {
-            return login(response,new HashMap<>());
+            return login(request, response,new HashMap<>());
         }
 
         // Check authenticated
@@ -612,6 +612,12 @@ public class KindeClientSDK {
     public Map<String, Object> getClaims(HttpServletRequest req){
         return getClaims(req,TokenType.ACCESS_TOKEN.getValue());
     }
+
+
+    protected AuthorizationCode createAuthorizationCode(HttpServletRequest request) {
+        return new AuthorizationCode(this.storage);
+    }
+
 
     private void cleanStorage(HttpServletResponse response) {
         storage.clear(response);

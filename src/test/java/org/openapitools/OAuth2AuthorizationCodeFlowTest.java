@@ -55,7 +55,7 @@ class OAuth2AuthorizationCodeFlowTest {
     @Test
     void testLoginTypeAuthorizationCodeFlow() {
         kindeClientSDK = new KindeClientSDK(domain, redirectUri, clientId, clientSecret, GrantType.AUTHORIZATION_CODE.getValue(), logoutRedirectUri);
-        Object result = kindeClientSDK.login(response);
+        Object result = kindeClientSDK.login(request, response);
         System.out.println(result);
         assertNotNull(result);
         assertTrue(result instanceof RedirectView);
@@ -64,7 +64,7 @@ class OAuth2AuthorizationCodeFlowTest {
     @Test
     void testLoginTypeAuthorizationCodeFlowWithAudience() {
         kindeClientSDK = new KindeClientSDK(domain, redirectUri, clientId, clientSecret, GrantType.AUTHORIZATION_CODE.getValue(), logoutRedirectUri, "", Collections.singletonMap("audience", domain + "/api"));
-        Object result = kindeClientSDK.login(response);
+        Object result = kindeClientSDK.login(request, response);
         System.out.println(result);
         assertNotNull(result);
         assertTrue(result instanceof RedirectView);
@@ -76,7 +76,7 @@ class OAuth2AuthorizationCodeFlowTest {
         Map<String, Object> additional = new HashMap<>();
         additional.put("org_code", "org_123");
         additional.put("org_name", "My Application");
-        Object result = kindeClientSDK.login(response,additional);
+        Object result = kindeClientSDK.login(request, response,additional);
         System.out.println(result);
         assertNotNull(result);
         assertTrue(result instanceof RedirectView);
