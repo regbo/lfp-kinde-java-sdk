@@ -12,6 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Component
 public class AuthorizationCode {
@@ -28,7 +29,7 @@ public class AuthorizationCode {
 //            additionalParameters=new HashMap<>();
 //        }
 
-        String state = Utils.randomString();
+        String state = createState(response, clientSDK, startPage, additionalParameters);
         storage.setState(response,state);
 
 //        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
@@ -64,7 +65,15 @@ public class AuthorizationCode {
 //        return new ModelAndView(redirectView);
     }
 
+
     public RedirectView authenticate(HttpServletResponse response,KindeClientSDK clientSDK,String startPage){
         return authenticate(response,clientSDK,startPage,new HashMap<>());
+    }
+
+    protected String createState(HttpServletResponse response,
+                                 KindeClientSDK clientSDK,
+                                 String startPage,
+                                 Map<String, Object> additionalParameters) {
+        return Utils.randomString();
     }
 }
