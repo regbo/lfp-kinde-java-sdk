@@ -1,6 +1,7 @@
 package org.openapitools.sdk;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.openapitools.sdk.enums.StorageEnums;
 import org.openapitools.sdk.storage.Storage;
 import org.openapitools.sdk.utils.Utils;
@@ -15,7 +16,12 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 //@Controller
 public class CallbackController {
@@ -87,18 +93,26 @@ public class CallbackController {
                         isAudienceValid &&
                         (long) (Integer) payload.get("exp") > System.currentTimeMillis() / 1000L
                 ) {
-
-                    String newKey = "kinde" + '_' + StorageEnums.TOKEN.getValue();
-                    Cookie cookie = new Cookie(newKey, URLEncoder.encode(new ObjectMapper().writeValueAsString((Map<String, Object>) data_), "UTF-8"));
-                    Long exp = System.currentTimeMillis() + 3600 * 24 * 15 * 1000;
-                    cookie.setMaxAge(exp.intValue());
-//                    long currentTimeSeconds = System.currentTimeMillis() / 1000;
-//                    cookie.setMaxAge((int) ((long) (Integer) payload.get("exp")- currentTimeSeconds));
-                    cookie.setPath("/");
-//                cookie.setDomain(domain);
-                    cookie.setSecure(true);
-                    cookie.setHttpOnly(true);
-                    response.addCookie(cookie);
+                    Stream<Object> expValues = data.values()
+                            .stream()
+                            .filter(String.class::isInstance)
+                            .map(String.class::cast)
+                            .map(Utils::parseJWT)
+                            .filter(Objects::nonNull)
+                            .map(v -> v.get("exp"));
+                    expValues = Stream.of(expValues, Stream.ofNullable(data.get("exp")));
+                    long expSeconds = expValues.filter(String.class::isInstance)
+                            .map(String.class::cast)
+                            .filter(StringUtils::isNumeric)
+                            .mapToLong(Long::parseLong)
+                            .max()
+                            .orElseGet(() -> {
+                                return System.currentTimeMillis() + 3600 * 24 * 15;
+                            });
+                    long ttlSeconds = expSeconds - Instant.now().getEpochSecond() ;
+                    var value = new ObjectMapper().writeValueAsString(data_);
+                    this.kindeClientSDK.getStorage()
+                            .setItem(response, StorageEnums.TOKEN.getValue(), value, (int) ttlSeconds, "/", null, true, true);
                 }else{
                     System.out.println("One or more of the claims were not verified.");
                 }

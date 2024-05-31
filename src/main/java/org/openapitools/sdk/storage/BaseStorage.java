@@ -99,14 +99,14 @@ public class BaseStorage {
     public void setItem(HttpServletResponse response,
                         String key,
                         String value,
-                        int expiresOrOptions,
+                        int maxAgeSeconds,
                         String path,
                         String domain,
                         boolean secure,
                         boolean httpOnly) {
         String newKey = getKey(key);
         Cookie cookie = new Cookie(newKey, value);
-        cookie.setMaxAge(expiresOrOptions);
+        cookie.setMaxAge(maxAgeSeconds);
         cookie.setPath(path);
         cookie.setDomain(domain);
         cookie.setSecure(secure);
