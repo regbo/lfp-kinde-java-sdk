@@ -47,8 +47,8 @@ public class CallbackController {
             HttpServletResponse response,
             HttpServletRequest request
     ) {
-        String codeVerifierCookie = storage.getState(request);
-        if (codeVerifierCookie != null) {
+        String storageState = storage.getState(request);
+        if (StringUtils.isNotEmpty(storageState) && storageState.equals(state)) {
             try {
                 RestTemplate restTemplate = new RestTemplate();
                 HttpHeaders headers = new HttpHeaders();
@@ -132,7 +132,7 @@ public class CallbackController {
 //            String redirectUrl = appConfig.getPostLoginURL() != null
 //                    ? appConfig.getPostLoginURL()
 //                    : logoutRedirectUri;
-            String redirectUrl = kindeClientSDK.getLogoutRedirectUri();
+            String redirectUrl = getPostLoginUrl(request, response, code, state);
             return new RedirectView(redirectUrl);
 //            return new RedirectView("");
         } else {
@@ -148,5 +148,10 @@ public class CallbackController {
 //            return new RedirectView(logoutURL);
 ////            return new RedirectView("");
         }
+    }
+
+    protected String getPostLoginUrl(HttpServletRequest request, HttpServletResponse response, String code,
+                                     String state) {
+        return this.kindeClientSDK.getLogoutRedirectUri();
     }
 }
