@@ -93,23 +93,30 @@ public class CallbackController {
                         isAudienceValid &&
                         (long) (Integer) payload.get("exp") > System.currentTimeMillis() / 1000L
                 ) {
-                    Stream<Object> expValues = data.values()
-                            .stream()
-                            .filter(String.class::isInstance)
-                            .map(String.class::cast)
-                            .map(Utils::parseJWT)
-                            .filter(Objects::nonNull)
-                            .map(v -> v.get("exp"));
-                    expValues = Stream.of(expValues, Stream.ofNullable(data.get("exp")));
-                    long expSeconds = expValues.filter(String.class::isInstance)
-                            .map(String.class::cast)
-                            .filter(StringUtils::isNumeric)
-                            .mapToLong(Long::parseLong)
-                            .max()
-                            .orElseGet(() -> {
-                                return System.currentTimeMillis() + 3600 * 24 * 15;
-                            });
-                    long ttlSeconds = expSeconds - Instant.now().getEpochSecond() ;
+                    var expValues = ((Map<?, ?>) data_).values().stream().map(value -> {
+                        if (value instanceof String) {
+                            var jwt = Utils.parseJWT((String) value);
+                            if (jwt != null) {
+                                return jwt.get("exp");
+                            }
+                        }
+                        return null;
+                    });
+                    expValues = Stream.concat(expValues, Stream.ofNullable(((Map<?, ?>) data_).get("expires_in")));
+                    Long maxExp = null;
+                    for (var expValueIterator = expValues.iterator(); expValueIterator.hasNext(); ) {
+                        var expValue = expValueIterator.next();
+                        if (expValue instanceof String && StringUtils.isNumeric((CharSequence) expValue)) {
+                            var exp = Long.parseLong((String) expValue);
+                            if (maxExp == null || exp > maxExp) {
+                                maxExp = exp;
+                            }
+                        }
+                    }
+                    if(maxExp==null){
+                        maxExp= System.currentTimeMillis() + 3600 * 24 * 15;
+                    }
+                    long ttlSeconds = maxExp - Instant.now().getEpochSecond() ;
                     var value = new ObjectMapper().writeValueAsString(data_);
                     this.kindeClientSDK.getStorage()
                             .setItem(response, StorageEnums.TOKEN.getValue(), value, (int) ttlSeconds, "/", null, true, true);
