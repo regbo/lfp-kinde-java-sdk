@@ -5,6 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.openapitools.sdk.enums.StorageEnums;
 import org.openapitools.sdk.storage.Storage;
 import org.openapitools.sdk.utils.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -27,8 +29,7 @@ import java.util.stream.Stream;
 //@Controller
 public class CallbackController {
 
-
-
+    private static final Logger log = LoggerFactory.getLogger(CallbackController.class);
 
     private KindeClientSDK kindeClientSDK;
 
@@ -122,10 +123,10 @@ public class CallbackController {
                     this.kindeClientSDK.getStorage()
                             .setItem(response, StorageEnums.TOKEN.getValue(), value, (int) ttlSeconds, "/", null, true, true);
                 }else{
-                    System.out.println("One or more of the claims were not verified.");
+                    log.info("One or more of the claims were not verified.");
                 }
             } catch (Exception e) {
-                System.err.println(e);
+                log.error("unexpected callback error",e);
             }
 
 //            String redirectUrl = appConfig.getPostLoginURL() != null

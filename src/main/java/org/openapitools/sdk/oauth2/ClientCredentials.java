@@ -6,6 +6,8 @@ import org.openapitools.sdk.KindeClientSDK;
 import org.openapitools.sdk.enums.GrantType;
 import org.openapitools.sdk.storage.Storage;
 import org.openapitools.sdk.utils.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -23,6 +25,8 @@ import java.util.Map;
 @Service
 public class ClientCredentials {
 
+    private static final Logger log = LoggerFactory.getLogger(ClientCredentials.class);
+    
     private Storage storage;
 
     public ClientCredentials(Storage storage) {
@@ -79,7 +83,7 @@ public class ClientCredentials {
 
             return tokenMap;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.info(e.getMessage());
             return new HashMap<>();
 //            throw new RuntimeException("Error during authentication: " + e.getMessage(), e);
         }

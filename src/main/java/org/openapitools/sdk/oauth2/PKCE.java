@@ -4,6 +4,8 @@ import org.openapitools.sdk.KindeClientSDK;
 import org.openapitools.sdk.enums.StorageEnums;
 import org.openapitools.sdk.storage.Storage;
 import org.openapitools.sdk.utils.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.servlet.view.RedirectView;
@@ -14,7 +16,7 @@ import java.util.Map;
 
 @Component
 public class PKCE {
-
+    private static final Logger log = LoggerFactory.getLogger(PKCE.class);
     private Storage storage;
 
     public PKCE(Storage storage) {
@@ -53,7 +55,7 @@ public class PKCE {
 
         // Create a RedirectView to perform the redirection
         RedirectView redirectView = new RedirectView();
-        System.out.println(authorizationUrl);
+        log.info(authorizationUrl);
         redirectView.setUrl(authorizationUrl);
 
         return redirectView;
