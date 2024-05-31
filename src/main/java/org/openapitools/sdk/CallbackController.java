@@ -106,17 +106,22 @@ public class CallbackController {
                     Long maxExp = null;
                     for (var expValueIterator = expValues.iterator(); expValueIterator.hasNext(); ) {
                         var expValue = expValueIterator.next();
-                        if (expValue instanceof String && StringUtils.isNumeric((CharSequence) expValue)) {
-                            var exp = Long.parseLong((String) expValue);
-                            if (maxExp == null || exp > maxExp) {
-                                maxExp = exp;
-                            }
+                        long exp;
+                        if (expValue instanceof Long) {
+                            exp = (Long) expValue;
+                        } else if (expValue instanceof String && StringUtils.isNumeric((CharSequence) expValue)) {
+                            exp = Long.parseLong((String) expValue);
+                        } else {
+                            continue;
+                        }
+                        if (maxExp == null || exp > maxExp) {
+                            maxExp = exp;
                         }
                     }
-                    if(maxExp==null){
-                        maxExp= System.currentTimeMillis() + 3600 * 24 * 15;
+                    if (maxExp == null) {
+                        maxExp = System.currentTimeMillis() + 3600 * 24 * 15;
                     }
-                    long ttlSeconds = maxExp - Instant.now().getEpochSecond() ;
+                    long ttlSeconds = maxExp - Instant.now().getEpochSecond();
                     var value = new ObjectMapper().writeValueAsString(data_);
                     this.kindeClientSDK.getStorage()
                             .setItem(response, StorageEnums.TOKEN.getValue(), value, (int) ttlSeconds, "/", null, true, true);
