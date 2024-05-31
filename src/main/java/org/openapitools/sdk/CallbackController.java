@@ -107,8 +107,8 @@ public class CallbackController {
                     for (var expValueIterator = expValues.iterator(); expValueIterator.hasNext(); ) {
                         var expValue = expValueIterator.next();
                         long exp;
-                        if (expValue instanceof Long) {
-                            exp = (Long) expValue;
+                        if (expValue instanceof Number) {
+                            exp = ((Number) expValue).longValue();
                         } else if (expValue instanceof String && StringUtils.isNumeric((CharSequence) expValue)) {
                             exp = Long.parseLong((String) expValue);
                         } else {
