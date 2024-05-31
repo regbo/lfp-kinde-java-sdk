@@ -270,7 +270,7 @@ public class KindeClientSDKTest {
         MockHttpServletRequest request_ = new MockHttpServletRequest();
         MockHttpServletResponse response_ = new MockHttpServletResponse();
 
-        Storage storage = Storage.getInstance();
+        Storage storage = client.getStorage();
         storage.setToken(response_,Collections.singletonMap("access_token", accessToken));
         request_.setCookies(new Cookie("kinde_token", URLEncoder.encode(new ObjectMapper().writeValueAsString((Map<String, Object>) Collections.singletonMap("access_token", accessToken)), "UTF-8")));
 
@@ -291,7 +291,7 @@ public class KindeClientSDKTest {
         MockHttpServletRequest request_ = new MockHttpServletRequest();
         MockHttpServletResponse response_ = new MockHttpServletResponse();
 
-        Storage storage = Storage.getInstance();
+        Storage storage = client.getStorage();
         storage.setToken(response_,Collections.singletonMap("access_token", accessToken));
         request_.setCookies(new Cookie("kinde_token", URLEncoder.encode(new ObjectMapper().writeValueAsString((Map<String, Object>) Collections.singletonMap("access_token", accessToken)), "UTF-8")));
 
@@ -316,7 +316,7 @@ public class KindeClientSDKTest {
         MockHttpServletRequest request_ = new MockHttpServletRequest();
         MockHttpServletResponse response_ = new MockHttpServletResponse();
 
-        Storage storage = Storage.getInstance();
+        Storage storage = client.getStorage();
         storage.setToken(response_, Collections.singletonMap("access_token", accessToken));
         request_.setCookies(new Cookie("kinde_token", URLEncoder.encode(new ObjectMapper().writeValueAsString((Map<String, Object>) Collections.singletonMap("access_token", accessToken)), "UTF-8")));
 
@@ -337,7 +337,7 @@ public class KindeClientSDKTest {
         MockHttpServletRequest request_ = new MockHttpServletRequest();
         MockHttpServletResponse response_ = new MockHttpServletResponse();
 
-        Storage storage = Storage.getInstance();
+        Storage storage = client.getStorage();
         storage.setToken(response_,Collections.singletonMap("access_token", accessToken));
         request_.setCookies(new Cookie("kinde_token", URLEncoder.encode(new ObjectMapper().writeValueAsString((Map<String, Object>) Collections.singletonMap("access_token", accessToken)), "UTF-8")));
 
@@ -358,7 +358,7 @@ public class KindeClientSDKTest {
         MockHttpServletRequest request_ = new MockHttpServletRequest();
         MockHttpServletResponse response_ = new MockHttpServletResponse();
 
-        Storage storage = Storage.getInstance();
+        Storage storage = client.getStorage();
         storage.setToken(response_,Collections.singletonMap("access_token", accessToken));
         request_.setCookies(new Cookie("kinde_token", URLEncoder.encode(new ObjectMapper().writeValueAsString((Map<String, Object>) Collections.singletonMap("access_token", accessToken)), "UTF-8")));
 
@@ -375,7 +375,7 @@ public class KindeClientSDKTest {
         MockHttpServletRequest request_ = new MockHttpServletRequest();
         MockHttpServletResponse response_ = new MockHttpServletResponse();
 
-        Storage storage = Storage.getInstance();
+        Storage storage = client.getStorage();
         Map<String, Object> map = new HashMap<>();
         map.put("access_token", accessToken);
         map.put("should_valid",true);
@@ -398,7 +398,7 @@ public class KindeClientSDKTest {
         MockHttpServletRequest request_ = new MockHttpServletRequest();
         MockHttpServletResponse response_ = new MockHttpServletResponse();
 
-        Storage storage = Storage.getInstance();
+        Storage storage = client.getStorage();
         Map<String, Object> map = new HashMap<>();
         map.put("refresh_token", refreshToken);
         map.put("access_token", accessToken);
@@ -420,7 +420,7 @@ public class KindeClientSDKTest {
         MockHttpServletRequest request_ = new MockHttpServletRequest();
         MockHttpServletResponse response_ = new MockHttpServletResponse();
 
-        Storage storage = Storage.getInstance();
+        Storage storage = client.getStorage();
 
         Map<String, Object> map = new HashMap<>();
         map.put("should_valid", true);

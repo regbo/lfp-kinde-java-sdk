@@ -7,13 +7,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 //import org.springframework.web.util.CookieUtils;
 
 public class BaseStorage {
 
-//    private static final String PREFIX = "kinde";
+//    private final String PREFIX = "kinde";
 //
-//    public static String getStorage(HttpServletRequest request) {
+//    public String getStorage(HttpServletRequest request) {
 //        Cookie[] cookies = request.getCookies();
 //        if (cookies != null) {
 //            for (Cookie cookie : cookies) {
@@ -25,7 +26,7 @@ public class BaseStorage {
 //        return null;
 //    }
 //
-//    public static String getItem(HttpServletRequest request, String key) {
+//    public String getItem(HttpServletRequest request, String key) {
 //        String newKey = getKey(key);
 //        Cookie[] cookies = request.getCookies();
 //        if (cookies != null) {
@@ -38,7 +39,7 @@ public class BaseStorage {
 //        return null;
 //    }
 //
-//    public static void setItem(HttpServletResponse response, String key, String value, int expiresOrOptions, String path, String domain, boolean secure, boolean httpOnly) {
+//    public void setItem(HttpServletResponse response, String key, String value, int expiresOrOptions, String path, String domain, boolean secure, boolean httpOnly) {
 //        String newKey = getKey(key);
 //        Cookie cookie = new Cookie(newKey, value);
 //        cookie.setMaxAge(expiresOrOptions);
@@ -49,14 +50,14 @@ public class BaseStorage {
 //        response.addCookie(cookie);
 //    }
 //
-//    public static void removeItem(HttpServletResponse response, String key) {
+//    public void removeItem(HttpServletResponse response, String key) {
 //        String newKey = getKey(key);
 //        Cookie cookie = new Cookie(newKey, "");
 //        cookie.setMaxAge(0);
 //        response.addCookie(cookie);
 //    }
 //
-//    public static void clear(HttpServletResponse response) {
+//    public void clear(HttpServletResponse response) {
 //        removeItem(response, StorageEnums.TOKEN.getValue());
 //        removeItem(response, StorageEnums.STATE.getValue());
 //        removeItem(response, StorageEnums.CODE_VERIFIER.getValue());
@@ -64,22 +65,25 @@ public class BaseStorage {
 //    }
 
 //
-//    private static String getKey(String key) {
+//    private String getKey(String key) {
 //        return PREFIX + '_' + key;
 //    }
 //
 
 
-    private static final String PREFIX = "kinde";
-    private static Map<String, String> storage;
-//    public static Map<String, String> getStorage() {
+    private static final String DEFAULT_PREFIX = "kinde";
+    private Map<String, String> storage;
+
+
+    private String prefix;
+//    public Map<String, String> getStorage() {
 //        if (storage == null) {
 //            storage = new HashMap<>();
 //        }
 //        return storage;
 //    }
 
-    public static String getItem(HttpServletRequest request, String key) {
+    public String getItem(HttpServletRequest request, String key) {
         String cookieName = getKey(key);
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -92,7 +96,14 @@ public class BaseStorage {
         return "";
     }
 
-    public static void setItem(HttpServletResponse response,String key, String value, int expiresOrOptions, String path, String domain, boolean secure, boolean httpOnly) {
+    public void setItem(HttpServletResponse response,
+                        String key,
+                        String value,
+                        int expiresOrOptions,
+                        String path,
+                        String domain,
+                        boolean secure,
+                        boolean httpOnly) {
         String newKey = getKey(key);
         Cookie cookie = new Cookie(newKey, value);
         cookie.setMaxAge(expiresOrOptions);
@@ -103,15 +114,15 @@ public class BaseStorage {
         response.addCookie(cookie);
     }
 
-    public static void setItem(HttpServletResponse response,String key, String value){
+    public void setItem(HttpServletResponse response, String key, String value) {
         setItem(response,key,value,0,"","",true,false);
     }
 
-    public static void setItem(HttpServletResponse response,String key, String value, int expiresOrOptions){
+    public void setItem(HttpServletResponse response, String key, String value, int expiresOrOptions) {
         setItem(response,key,value,expiresOrOptions,"","",true,false);
     }
 
-    public static void removeItem(HttpServletResponse response, String key) {
+    public void removeItem(HttpServletResponse response, String key) {
         String cookieName = getKey(key);
         Cookie cookie = new Cookie(cookieName, "");
         cookie.setMaxAge(0);
@@ -119,7 +130,7 @@ public class BaseStorage {
         response.addCookie(cookie);
     }
 
-    public static void clear(HttpServletResponse response) {
+    public void clear(HttpServletResponse response) {
         removeItem(response,StorageEnums.TOKEN.getValue());
         removeItem(response,StorageEnums.STATE.getValue());
         removeItem(response,StorageEnums.CODE_VERIFIER.getValue());
@@ -127,16 +138,24 @@ public class BaseStorage {
     }
 
 
-    private static String getKey(String key) {
-        return PREFIX + '_' + key;
+    private String getKey(String key) {
+        return Optional.ofNullable(getPrefix()).orElse(DEFAULT_PREFIX)+ '_' + key;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
     }
 
 
-//    private static final String PREFIX = "kinde";
+//    private final String PREFIX = "kinde";
 //
-//    private static Map<String, String> storage;
+//    private Map<String, String> storage;
 //
-//    public static Map<String, String> getStorage() {
+//    public Map<String, String> getStorage() {
 //        if (storage == null) {
 //            storage = new HashMap<>();
 //            String kindeCookie = CookieUtils.getCookie(PREFIX);
@@ -151,11 +170,11 @@ public class BaseStorage {
 //        return storage;
 //    }
 //
-//    public static String getItem(String key) {
+//    public String getItem(String key) {
 //        return getStorage().get(key);
 //    }
 //
-//    public static void setItem(
+//    public void setItem(
 //            String key,
 //            String value,
 //            int expires_or_options,
@@ -169,7 +188,7 @@ public class BaseStorage {
 //        CookieUtils.setCookie(newKey, value, expires_or_options, path, domain, secure, httpOnly);
 //    }
 //
-//    public static void removeItem(String key) {
+//    public void removeItem(String key) {
 //        String newKey = getKey(key);
 //        if (storage.containsKey(newKey)) {
 //            storage.remove(newKey);
@@ -177,13 +196,13 @@ public class BaseStorage {
 //        }
 //    }
 //
-//    public static void clear() {
+//    public void clear() {
 //        for (StorageEnums storageEnum : StorageEnums.values()) {
 //            removeItem(storageEnum.getValue());
 //        }
 //    }
 //
-//    private static String getKey(String key) {
+//    private String getKey(String key) {
 //        return PREFIX + "_" + key;
 //    }
 }

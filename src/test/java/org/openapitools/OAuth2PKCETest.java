@@ -54,7 +54,7 @@ public class OAuth2PKCETest {
     @Test
     public void testLoginTypePKCE() {
         kindeClientSDK= new KindeClientSDK(
-                domain,redirectUri,clientId,clientSecret,GrantType.PKCE.getValue(),logoutRedirectUri,null,null,null
+                domain,redirectUri,clientId,clientSecret,GrantType.PKCE.getValue(),logoutRedirectUri,null,null,null, null
         );
         Object result = kindeClientSDK.login(response);
         System.out.println("testLoginTypePKCE() :: "+result.toString());
@@ -65,7 +65,7 @@ public class OAuth2PKCETest {
     @Test
     public void testLoginTypeClientCredentialFlowWithAudience() {
         kindeClientSDK= new KindeClientSDK(
-                domain,redirectUri,clientId,clientSecret,GrantType.PKCE.getValue(),logoutRedirectUri,null, Collections.singletonMap("audience",domain+"/api"),null
+                domain,redirectUri,clientId,clientSecret,GrantType.PKCE.getValue(),logoutRedirectUri,null, Collections.singletonMap("audience",domain+"/api"),null, null
         );
         Object result = kindeClientSDK.login(response);
         System.out.println("testLoginTypeClientCredentialFlowWithAudience() :: "+result.toString());
@@ -76,7 +76,7 @@ public class OAuth2PKCETest {
     @Test
     public void testLoginTypeClientCredentialFlowWithOrgCode() {
         kindeClientSDK= new KindeClientSDK(
-                domain,redirectUri,clientId,clientSecret,GrantType.PKCE.getValue(),logoutRedirectUri,null, Collections.singletonMap("audience",domain+"/api"),null
+                domain,redirectUri,clientId,clientSecret,GrantType.PKCE.getValue(),logoutRedirectUri,null, Collections.singletonMap("audience",domain+"/api"),null, null
         );
         Map<String,Object> additonalParameters=new HashMap<>();
         additonalParameters.put("org_code","org_b3afab4f52a");
@@ -90,7 +90,7 @@ public class OAuth2PKCETest {
     @Test
     public void testRegisterTypeClientCredentialFlowWithAdditional() {
         kindeClientSDK= new KindeClientSDK(
-                domain,redirectUri,clientId,clientSecret,GrantType.PKCE.getValue(),logoutRedirectUri,null, Collections.singletonMap("audience",domain+"/api"),null
+                domain,redirectUri,clientId,clientSecret,GrantType.PKCE.getValue(),logoutRedirectUri,null, Collections.singletonMap("audience",domain+"/api"),null, null
         );
         Map<String,Object> additonalParameters=new HashMap<>();
         additonalParameters.put("org_code","org_b3afab4f52a");
@@ -104,7 +104,7 @@ public class OAuth2PKCETest {
     @Test
     public void testCreateOrgTypeClientCredentialFlow() {
         kindeClientSDK= new KindeClientSDK(
-                domain,redirectUri,clientId,clientSecret,GrantType.PKCE.getValue(),logoutRedirectUri,null, Collections.singletonMap("audience",domain+"/api"),null
+                domain,redirectUri,clientId,clientSecret,GrantType.PKCE.getValue(),logoutRedirectUri,null, Collections.singletonMap("audience",domain+"/api"),null, null
         );
         Object result = kindeClientSDK.createOrg(response);
         System.out.println("testCreateOrgTypeClientCredentialFlow() :: "+result.toString());
@@ -115,7 +115,7 @@ public class OAuth2PKCETest {
     @Test
     public void testCreateOrgTypeClientCredentialFlowWithAdditional() {
         kindeClientSDK= new KindeClientSDK(
-                domain,redirectUri,clientId,clientSecret,GrantType.PKCE.getValue(),logoutRedirectUri,null, Collections.singletonMap("audience",domain+"/api"),null
+                domain,redirectUri,clientId,clientSecret,GrantType.PKCE.getValue(),logoutRedirectUri,null, Collections.singletonMap("audience",domain+"/api"),null, null
         );
         Map<String,Object> additonalParameters=new HashMap<>();
         additonalParameters.put("org_code","org_b3afab4f52a");

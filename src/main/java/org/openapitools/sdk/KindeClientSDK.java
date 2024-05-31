@@ -113,7 +113,8 @@ public class KindeClientSDK {
             String logoutRedirectUri,
             String scopes,
             Map<String, Object> additionalParameters,
-            String protocol
+            String protocol,
+            Storage storage
     ) {
         if (domain == null || domain.isEmpty()) {
             throw new IllegalArgumentException("Please provide domain");
@@ -175,7 +176,7 @@ public class KindeClientSDK {
         this.tokenEndpoint = this.domain + "/oauth2/token";
         this.logoutEndpoint = this.domain + "/logout";
 
-        this.storage = Storage.getInstance();
+        this.storage =Optional.ofNullable(storage).orElseGet(Storage::new);
     }
 
     public KindeClientSDK(
@@ -188,7 +189,7 @@ public class KindeClientSDK {
             String scopes,
             Map<String, Object> additionalParameters
     ){
-        this(domain,redirectUri,clientId,clientSecret,grantType,logoutRedirectUri,scopes,additionalParameters,null);
+        this(domain,redirectUri,clientId,clientSecret,grantType,logoutRedirectUri,scopes,additionalParameters,null, null);
     }
 
     public KindeClientSDK(
@@ -200,7 +201,7 @@ public class KindeClientSDK {
             String logoutRedirectUri,
             String scopes
     ){
-        this(domain,redirectUri,clientId,clientSecret,grantType,logoutRedirectUri,scopes,null,null);
+        this(domain,redirectUri,clientId,clientSecret,grantType,logoutRedirectUri,scopes,null,null, null);
     }
 
     public KindeClientSDK(
@@ -211,7 +212,7 @@ public class KindeClientSDK {
             String grantType,
             String logoutRedirectUri
     ){
-        this(domain,redirectUri,clientId,clientSecret,grantType,logoutRedirectUri,null,null,null);
+        this(domain,redirectUri,clientId,clientSecret,grantType,logoutRedirectUri,null,null,null, null);
     }
 
     public KindeClientSDK(
@@ -223,7 +224,7 @@ public class KindeClientSDK {
             String logoutRedirectUri,
             Map<String, Object> additionalParameters
     ){
-        this(domain,redirectUri,clientId,clientSecret,grantType,logoutRedirectUri,null,additionalParameters,null);
+        this(domain,redirectUri,clientId,clientSecret,grantType,logoutRedirectUri,null,additionalParameters,null, null);
     }
 
     public Object login(HttpServletResponse response,Map<String, Object> additionalParameters) {

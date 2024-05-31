@@ -16,23 +16,16 @@ public class Storage extends BaseStorage {
 
 
 
-    private static Storage instance;
-    private static Long tokenTimeToLive;
+    private Long tokenTimeToLive;
 
-    private static final Map<String, String> storageMap = new ConcurrentHashMap<>();
+    private final Map<String, String> storageMap = new ConcurrentHashMap<>();
 
-    public static Storage getInstance() {
-        if (instance == null) {
-            instance = new Storage();
-        }
-        return instance;
-    }
 
-//    public static Map<String, String> getStorageMap() {
+//    public Map<String, String> getStorageMap() {
 //        return storageMap;
 //    }
 
-    public static Map<String, Object> getToken(HttpServletRequest request) {
+    public Map<String, Object> getToken(HttpServletRequest request) {
         try{
             String token = getItem(request,StorageEnums.TOKEN.getValue());
             //        return Optional.ofNullable(token).map(Utils::jsonDecode);
@@ -48,7 +41,7 @@ public class Storage extends BaseStorage {
         }
     }
 
-    public static void setToken(HttpServletResponse response,Object token) {
+    public void setToken(HttpServletResponse response,Object token) {
 //        getStorageMap().put(StorageEnums.TOKEN.getValue(), token);
 //        setTokenTimeToLive(tokenTimeToLive);
         String tok="";
@@ -65,55 +58,55 @@ public class Storage extends BaseStorage {
         setItem(response,StorageEnums.TOKEN.getValue(), tok, getTokenTimeToLive().intValue());
     }
 
-    public static String getAccessToken(HttpServletRequest request) {
+    public String getAccessToken(HttpServletRequest request) {
         Map<String,Object> token = getToken(request);
         return token != null ? (String) token.get("access_token") : null;
     }
 
-    public static String getIdToken(HttpServletRequest request) {
+    public String getIdToken(HttpServletRequest request) {
         Map<String,Object> token = getToken(request);
         return token != null ? (String) token.get("id_token") : null;
     }
 
-    public static String getRefreshToken(HttpServletRequest request) {
+    public String getRefreshToken(HttpServletRequest request) {
         Map<String,Object> token = getToken(request);
         return token != null ? (String) token.get("refresh_token") : null;
     }
 
-    public static Long getExpiredAt(HttpServletRequest request) {
+    public Long getExpiredAt(HttpServletRequest request) {
         String accessToken = getAccessToken(request);
 //        return accessToken != null ? Long.parseLong((String) Utils.parseJWT(accessToken).get("exp")) : 0L;
         return accessToken != null ? ((Integer) Utils.parseJWT(accessToken).get("exp")).longValue() : 0L;
     }
 
-    public static Long getTokenTimeToLive() {
+    public Long getTokenTimeToLive() {
         return tokenTimeToLive != null ? tokenTimeToLive : System.currentTimeMillis() + 3600 * 24 * 15 * 1000; // Live in 15 days
     }
 
-    public static void setTokenTimeToLive(Long tokenTTL) {
+    public void setTokenTimeToLive(Long tokenTTL) {
         tokenTimeToLive = tokenTTL;
     }
 //
-    public static String getState(HttpServletRequest request) {
+    public String getState(HttpServletRequest request) {
         return getItem(request,StorageEnums.STATE.getValue());
     }
 
-    public static void setState( HttpServletResponse response,String newState) {
+    public void setState( HttpServletResponse response,String newState) {
         setItem(response,StorageEnums.STATE.getValue(), newState,(int) ((long) (System.currentTimeMillis() + 3600 *2 )));
         // set expiration time for state
     }
 
-    public static String getCodeVerifier(HttpServletRequest request) {
+    public String getCodeVerifier(HttpServletRequest request) {
         return getItem(request,StorageEnums.CODE_VERIFIER.getValue());
     }
 
-    public static void setCodeVerifier(HttpServletResponse response,String newCodeVerifier) {
+    public void setCodeVerifier(HttpServletResponse response,String newCodeVerifier) {
         setItem(response,StorageEnums.CODE_VERIFIER.getValue(), newCodeVerifier,(int) ((long) (System.currentTimeMillis() + 3600 *2 )));
         // set expiration time for code verifier
     }
 
 
-    public static Map<String, Object> getUserProfile(HttpServletRequest request) {
+    public Map<String, Object> getUserProfile(HttpServletRequest request) {
         Map<String, Object> token = getToken(request);
         String idToken = getIdToken(request);
         Map<String, Object> payload = Utils.parseJWT(idToken);
