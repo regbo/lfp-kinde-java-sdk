@@ -21,6 +21,7 @@ import java.time.Instant;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 //@Controller
@@ -93,35 +94,30 @@ public class CallbackController {
                         isAudienceValid &&
                         (long) (Integer) payload.get("exp") > System.currentTimeMillis() / 1000L
                 ) {
-                    var expValues = ((Map<?, ?>) data_).values().stream().map(value -> {
-                        if (value instanceof String) {
-                            var jwt = Utils.parseJWT((String) value);
-                            if (jwt != null) {
-                                return jwt.get("exp");
-                            }
+                    Function<Object, Long> toLong = obj -> {
+                        if (obj instanceof Number) {
+                            return ((Number) obj).longValue();
+                        } else if (obj instanceof String str && StringUtils.isNumeric(str)) {
+                            return Long.parseLong(str);
                         }
                         return null;
-                    });
-                    expValues = Stream.concat(expValues, Stream.ofNullable(((Map<?, ?>) data_).get("expires_in")));
-                    Long maxExp = null;
-                    for (var expValueIterator = expValues.iterator(); expValueIterator.hasNext(); ) {
-                        var expValue = expValueIterator.next();
-                        long exp;
-                        if (expValue instanceof Number) {
-                            exp = ((Number) expValue).longValue();
-                        } else if (expValue instanceof String && StringUtils.isNumeric((CharSequence) expValue)) {
-                            exp = Long.parseLong((String) expValue);
-                        } else {
-                            continue;
-                        }
-                        if (maxExp == null || exp > maxExp) {
-                            maxExp = exp;
-                        }
+                    };
+                    var exp = toLong.apply(((Map<?, ?>) data_).get("expires_in"));
+                    if (exp == null) {
+                        exp = ((Map<?, ?>) data_).values()
+                                .stream()
+                                .filter(String.class::isInstance)
+                                .map(String.class::cast)
+                                .map(Utils::parseJWT)
+                                .filter(Objects::nonNull)
+                                .map(v -> v.get("exp"))
+                                .map(toLong).filter(Objects::nonNull).mapToLong(v -> v)
+                                .max()
+                                .orElseGet(() -> {
+                                    return System.currentTimeMillis() + 3600 * 24 * 15;
+                                });
                     }
-                    if (maxExp == null) {
-                        maxExp = System.currentTimeMillis() + 3600 * 24 * 15;
-                    }
-                    long ttlSeconds = maxExp - Instant.now().getEpochSecond();
+                    long ttlSeconds = exp - Instant.now().getEpochSecond();
                     var value = new ObjectMapper().writeValueAsString(data_);
                     this.kindeClientSDK.getStorage()
                             .setItem(response, StorageEnums.TOKEN.getValue(), value, (int) ttlSeconds, "/", null, true, true);
